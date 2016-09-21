@@ -8,11 +8,30 @@
     tools:context="com.aitangba.progressbar.MainActivity"
     android:orientation="vertical">
 
-    <com.aitangba.progressbar.ProgressbarView
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"/>
-    <TextView
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"/>
+        android:gravity="center_vertical">
+
+        <com.aitangba.progressbar.ProgressbarView
+            android:id="@+id/progressbar"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"/>
+
+        <TextView
+            android:id="@+id/tv_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|right"
+            android:layout_marginRight="15dp"
+            android:text="Hello World!"/>
+
+    </FrameLayout>
+
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_marginTop="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
 </LinearLayout>

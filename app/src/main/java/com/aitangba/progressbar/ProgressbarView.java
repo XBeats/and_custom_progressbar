@@ -15,6 +15,8 @@ import android.view.SurfaceView;
  */
 public class ProgressbarView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
 
+    private static final int REFRESH_TIME = 70; //ms
+
     private SurfaceHolder holder;
 
     private Paint mLightPaint;
@@ -23,6 +25,33 @@ public class ProgressbarView extends SurfaceView implements SurfaceHolder.Callba
 
     private int mDeepColorId = Color.parseColor("#91E13D");
     private int mLightColorId = Color.parseColor("#B9EC83");
+    private int mBackgroundColor = Color.WHITE;
+
+    private boolean mIsPlaying;
+    private int mDistance; //px 0 <--> 2 * mLineWidth
+    private int mLineWidth = 20; //px
+    private double mAngle = 60; //
+    private double mProgress = (double) 3  / 4;
+
+    /**
+     * between 0 to 100
+     * @param progress
+     */
+    public void setProgress(int progress) {
+        mProgress = (double) progress / 100;
+    }
+
+    /**
+     * between 0 to 90
+     * @param angle
+     */
+    public void setAngle(double angle) {
+        mAngle = angle;
+    }
+
+    public void setLineWidth(int lineWidth) {
+        mLineWidth = lineWidth;
+    }
 
     public ProgressbarView(Context context) {
         this(context, null);
@@ -66,22 +95,15 @@ public class ProgressbarView extends SurfaceView implements SurfaceHolder.Callba
 
 
     @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        mIsPlaying = true;
+    }
+
+    @Override
     protected void onDetachedFromWindow() {
         mIsPlaying = false;
         super.onDetachedFromWindow();
-    }
-
-    private boolean mIsPlaying;
-    private int mDistance; //px 0 <--> 40
-
-    private int mLineWidth = 20; //px
-    private double mAngle = 60; //
-
-    private double mProgress = (double) 3  / 4;
-    private int mBackgroundColor = Color.WHITE;
-
-    public void setProgress(double progress) {
-        mProgress = progress;
     }
 
     @Override
@@ -195,7 +217,7 @@ public class ProgressbarView extends SurfaceView implements SurfaceHolder.Callba
             holder.unlockCanvasAndPost(canvas);// 解锁画布，提交画好的图像
             try {
                 if(!mIsPlaying)continue;
-                Thread.sleep(70);
+                Thread.sleep(REFRESH_TIME);
                 mDistance = (mDistance + 10) % (mLineWidth * 2);
             } catch (InterruptedException e) {
                 e.printStackTrace();
