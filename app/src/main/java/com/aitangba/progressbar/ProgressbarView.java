@@ -112,6 +112,7 @@ public class ProgressbarView extends SurfaceView implements SurfaceHolder.Callba
         while (mIsPlaying) {
             //开始画的时间
             Canvas canvas = holder.lockCanvas();//获取画布
+            if(canvas == null)continue;
             canvas.drawColor(mBackgroundColor);
 
             final int height = getMeasuredHeight();
