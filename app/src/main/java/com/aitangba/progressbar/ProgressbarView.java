@@ -3,6 +3,7 @@ package com.aitangba.progressbar;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
@@ -205,10 +206,10 @@ public class ProgressbarView extends SurfaceView implements SurfaceHolder.Callba
                 canvas.drawPath(deepSecondPath, firstPaint);
             }
 
-//            Path firstShadePath = new Path();
-//            firstShadePath.addRect(startWidth - offsetX, 0, startWidth, height, Path.Direction.CW);
-//            firstShadePath.transform(new Matrix());
-//            canvas.drawPath(firstShadePath, mShadePaint);
+            Path firstShadePath = new Path();
+            firstShadePath.addRect(startWidth - offsetX, 0, startWidth, height, Path.Direction.CW);
+            firstShadePath.transform(new Matrix());
+            canvas.drawPath(firstShadePath, mShadePaint);
 
             Path lastShadePath = new Path();
             lastShadePath.addRect(limitWidth, 0, limitWidth + offsetX, height, Path.Direction.CW);
