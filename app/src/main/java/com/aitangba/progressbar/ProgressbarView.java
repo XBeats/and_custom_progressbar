@@ -39,7 +39,7 @@ public class ProgressbarView extends SurfaceView implements SurfaceHolder.Callba
      * @param startProgress
      */
     public void setStartProgress(int startProgress) {
-        mStartProgress = startProgress;
+        mStartProgress = (double) startProgress / 100;
     }
 
     /**
