@@ -3,7 +3,6 @@ package com.aitangba.progressbar;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
@@ -31,7 +30,17 @@ public class ProgressbarView extends SurfaceView implements SurfaceHolder.Callba
     private int mDistance; //px 0 <--> 2 * mLineWidth
     private int mLineWidth = 20; //px
     private double mAngle = 60; //
+
+    private double mStartProgress = 0;
     private double mProgress = (double) 3  / 4;
+
+    /**
+     * between 0 to 100
+     * @param startProgress
+     */
+    public void setStartProgress(int startProgress) {
+        mStartProgress = startProgress;
+    }
 
     /**
      * between 0 to 100
@@ -39,6 +48,9 @@ public class ProgressbarView extends SurfaceView implements SurfaceHolder.Callba
      */
     public void setProgress(int progress) {
         mProgress = (double) progress / 100;
+        if(mProgress < mStartProgress) {
+            mProgress = mStartProgress;
+        }
     }
 
     /**
@@ -118,7 +130,7 @@ public class ProgressbarView extends SurfaceView implements SurfaceHolder.Callba
             final int height = getMeasuredHeight();
             final int width = getMeasuredWidth();
             final float offsetX = (float) (Math.tan(mAngle) * height);
-            final float startWidth = 0;
+            final float startWidth = (float) (width * mStartProgress);
             final float limitWidth = (float) (width * mProgress);
             final float lastLimit = limitWidth + offsetX;
 
@@ -132,7 +144,7 @@ public class ProgressbarView extends SurfaceView implements SurfaceHolder.Callba
                     distance = mDistance;
                     firstPaint = mDeepPaint;
                     secondPaint = mLightPaint;
-                }else {      //mDistance >= mLineWidth && mDistance <= 2 * mLineWidth
+                } else {      //mDistance >= mLineWidth && mDistance <= 2 * mLineWidth
                     distance = mDistance - mLineWidth;
                     firstPaint = mLightPaint;
                     secondPaint = mDeepPaint;
@@ -208,7 +220,6 @@ public class ProgressbarView extends SurfaceView implements SurfaceHolder.Callba
 
             Path firstShadePath = new Path();
             firstShadePath.addRect(startWidth - offsetX, 0, startWidth, height, Path.Direction.CW);
-            firstShadePath.transform(new Matrix());
             canvas.drawPath(firstShadePath, mShadePaint);
 
             Path lastShadePath = new Path();
