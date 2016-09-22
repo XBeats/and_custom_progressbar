@@ -14,7 +14,7 @@ import android.view.SurfaceView;
  */
 public class ProgressbarView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
 
-    private static final int REFRESH_TIME = 70; //ms
+    private static final int REFRESH_TIME = 15; //ms
 
     private SurfaceHolder holder;
 
@@ -33,6 +33,8 @@ public class ProgressbarView extends SurfaceView implements SurfaceHolder.Callba
 
     private double mStartProgress = 0;
     private double mProgress = (double) 3  / 4;
+
+    private int mStepDistance = 4;
 
     /**
      * between 0 to 100
@@ -230,7 +232,7 @@ public class ProgressbarView extends SurfaceView implements SurfaceHolder.Callba
             try {
                 if(!mIsPlaying)continue;
                 Thread.sleep(REFRESH_TIME);
-                mDistance = (mDistance + 10) % (mLineWidth * 2);
+                mDistance = (mDistance + mStepDistance) % (mLineWidth * 2);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
