@@ -35,6 +35,7 @@ public class ProgressbarView extends SurfaceView implements SurfaceHolder.Callba
     private double mProgress = (double) 3  / 4;
 
     private int mStepDistance = 4;
+    private int mRefreshTime = REFRESH_TIME;
 
     /**
      * between 0 to 100
@@ -61,6 +62,18 @@ public class ProgressbarView extends SurfaceView implements SurfaceHolder.Callba
      */
     public void setAngle(double angle) {
         mAngle = angle;
+    }
+
+    /**
+     * between 0 to 2 * mLineWidth
+     * @param stepDistance
+     */
+    public void setStepDistance(int stepDistance) {
+        mStepDistance = stepDistance;
+    }
+
+    public void setRefreshTime(int refreshTime) {
+        mRefreshTime = refreshTime;
     }
 
     public void setLineWidth(int lineWidth) {
@@ -231,7 +244,7 @@ public class ProgressbarView extends SurfaceView implements SurfaceHolder.Callba
             holder.unlockCanvasAndPost(canvas);// 解锁画布，提交画好的图像
             try {
                 if(!mIsPlaying)continue;
-                Thread.sleep(REFRESH_TIME);
+                Thread.sleep(mRefreshTime);
                 mDistance = (mDistance + mStepDistance) % (mLineWidth * 2);
             } catch (InterruptedException e) {
                 e.printStackTrace();
