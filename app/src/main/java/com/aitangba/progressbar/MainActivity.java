@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
         progressbar.setLineWidth(LINE_WIDTH);
         progressbar.setStepDistance(4);
         progressbar.setRefreshTime(15);
+        progressbar.setAngle(60);
 
         final TextView descText = (TextView) findViewById(R.id.tv_desc);
         final TextView progressText = (TextView) findViewById(R.id.tv_progress);
@@ -88,5 +89,28 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         refreshTimeSeekBar.setProgress(15);
+
+        final TextView angleText = (TextView) findViewById(R.id.tv_angle);
+        SeekBar angleSeekBar = (SeekBar) findViewById(R.id.seekBar_angle);
+        angleSeekBar.setMax(89);
+        angleSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                progressbar.setAngle(progress);
+                angleText.setText("倾斜角度" + progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        angleSeekBar.setProgress(60);
     }
 }
