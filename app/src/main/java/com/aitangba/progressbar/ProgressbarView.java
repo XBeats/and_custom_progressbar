@@ -97,7 +97,7 @@ public class ProgressbarView extends SurfaceView implements SurfaceHolder.Callba
 
     public ProgressbarView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        holder = this.getHolder();  //获取holder
+        holder = this.getHolder();
         holder.addCallback(this);
     }
 
@@ -144,7 +144,7 @@ public class ProgressbarView extends SurfaceView implements SurfaceHolder.Callba
     public void run() {
 
         while (mIsPlaying) {
-            Canvas canvas = holder.lockCanvas();//获取画布
+            Canvas canvas = holder.lockCanvas();
             if(canvas == null) return;
             final int saveID1 = canvas.save(Canvas.MATRIX_SAVE_FLAG);
 
@@ -157,7 +157,6 @@ public class ProgressbarView extends SurfaceView implements SurfaceHolder.Callba
             final float startWidth = (int) (width * mStartProgress);
             final double limitWidth = (int) (width * mProgress);
             final RectF clipAreaRectF = new RectF(startWidth, 0, (float) limitWidth, height);
-
 
             //draw first front color
             canvas.drawRect(clipAreaRectF, mLightPaint);
@@ -193,7 +192,7 @@ public class ProgressbarView extends SurfaceView implements SurfaceHolder.Callba
             canvas.drawColor(mDeepColorId);
             canvas.restoreToCount(saveID1);
 
-            holder.unlockCanvasAndPost(canvas);// 解锁画布，提交画好的图像
+            holder.unlockCanvasAndPost(canvas);
 
             try {
                 if(!mIsPlaying)continue;
