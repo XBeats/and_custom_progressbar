@@ -146,33 +146,32 @@ public class ProgressbarView extends SurfaceView implements SurfaceHolder.Callba
         while (mIsPlaying) {
             Canvas canvas = holder.lockCanvas();
             if(canvas == null) return;
-            final int saveID1 = canvas.save(Canvas.MATRIX_SAVE_FLAG);
 
             //draw background color
             canvas.drawColor(mBackgroundColor);
 
-            final int stepDistance = mDistance > mLineWidth ? mDistance - 2 * mLineWidth : mDistance;
             final int width = getMeasuredWidth();
             final int height = getMeasuredHeight();
             final float startWidth = (int) (width * mStartProgress);
-            final double limitWidth = (int) (width * mProgress);
-            final RectF clipAreaRectF = new RectF(startWidth, 0, (float) limitWidth, height);
+            final float limitWidth = (int) (width * mProgress);
+            final RectF clipAreaRectF = new RectF(startWidth, 0, limitWidth, height);
 
             //draw first front color
             canvas.drawRect(clipAreaRectF, mLightPaint);
-            canvas.saveLayerAlpha(clipAreaRectF, 255, Canvas.ALL_SAVE_FLAG);
 
-            //draw second front color
-            float angle = (float) Math.tan(Math.toRadians(mAngle));
-            canvas.skew(angle, 0);
-            final float drawStartX = startWidth - (float) height * angle + stepDistance;
+            final int lineWidth = mLineWidth; //为保障线程安全，所有变量用final
+            final int offsetX = - 2 * lineWidth + mDistance; //由于发生裁剪，所以无需担心多出的部分
+            final float radianTanValue = (float) Math.tan(Math.toRadians(mAngle));
+            final float offsetDistance = height * radianTanValue;
+            final float totalWidth = limitWidth - startWidth + Math.abs(offsetDistance) + 2 * lineWidth;
+            final int drawCount = (int) Math.ceil(totalWidth / lineWidth);
+            final float drawStartX = (offsetDistance > 0 ? startWidth - offsetDistance : startWidth) + offsetX;
 
-            Path frontArea = new Path();
+            final Path frontArea = new Path();
             frontArea.moveTo(drawStartX, 0);
-            final int drawCount = (int) Math.ceil((limitWidth - drawStartX) / (mLineWidth));
             for(int i = 0 ; i < drawCount ; i ++) {
-                float horizontalStartX = drawStartX + mLineWidth * i;
-                float horizontalEndX = horizontalStartX + mLineWidth;
+                float horizontalStartX = drawStartX + lineWidth * i;
+                float horizontalEndX = horizontalStartX + lineWidth;
 
                 final int lineHeight = i % 2 == 0 ? height : 0;
 
@@ -183,14 +182,15 @@ public class ProgressbarView extends SurfaceView implements SurfaceHolder.Callba
             }
             //last line
             if(drawCount % 2 != 0) {
-                float horizontalX = drawStartX + mLineWidth * drawCount;
+                float horizontalX = drawStartX + lineWidth * drawCount;
                 frontArea.lineTo(horizontalX, 0);
             }
             frontArea.close();
 
-            canvas.clipPath(frontArea);
-            canvas.drawColor(mDeepColorId);
-            canvas.restoreToCount(saveID1);
+            //draw second front color
+            canvas.clipRect(clipAreaRectF);
+            canvas.skew(radianTanValue, 0);
+            canvas.drawPath(frontArea, mDeepPaint);
 
             holder.unlockCanvasAndPost(canvas);
 
