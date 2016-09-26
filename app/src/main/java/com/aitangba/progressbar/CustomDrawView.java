@@ -50,31 +50,24 @@ public class CustomDrawView extends View {
         canvas.drawRect(clipAreaRect, redPaint);
 
         int angle = 45;
-        int offsetX = mDistance > mLineWidth ? mDistance - 2 * mLineWidth : mDistance;
-        float radianTanValue = (float) Math.tan(Math.toRadians(angle));
-        float offsetDistance = height * radianTanValue;
-        float totalWidth = endPointX - startPointX + Math.abs(offsetDistance);
+        float radian = (float) Math.toRadians(angle);
+        float radianTanValue = (float) Math.tan(radian);
+        int offsetX = mDistance > mLineWidth ?  -2 * mLineWidth + mDistance  : mDistance; //offsetX
+        float paddingDistance = height * radianTanValue; //paddingDistance
+        final int rectWidth = endPointX - startPointX; //rectWidth
+        final float totalWidth = offsetX + Math.abs(paddingDistance) + rectWidth;
         final int cycleCount = (int) Math.ceil((double) totalWidth / mLineWidth);
-        final float drawStartX = (offsetDistance > 0 ? startPointX - offsetDistance : startPointX) + offsetX;
+
+        final float drawStartX = (paddingDistance > 0 ? startPointX - paddingDistance : startPointX)
+                + (offsetX);
+        final Path rectPath = new Path();
+        rectPath.addRect(drawStartX, 0, drawStartX + mLineWidth, height, Path.Direction.CW);
 
         Path deepPath = new Path();
         deepPath.moveTo(drawStartX, 0);
         for(int i = 0 ; i < cycleCount; i ++) {
-            final float horizontalStartX = drawStartX + mLineWidth * i;
-            final float horizontalEndX = horizontalStartX + mLineWidth;
-            final int lineHeight = i % 2 == 0 ? height : 0;
-
-            //draw vertical
-            deepPath.lineTo(horizontalStartX, lineHeight);
-            //draw horizontal
-            deepPath.lineTo(horizontalEndX, lineHeight);
+            deepPath.addPath(rectPath, i * 2 * mLineWidth, 0);
         }
-        //last line
-        if(cycleCount % 2 != 0) {
-            float horizontalX = drawStartX + mLineWidth * cycleCount;
-            deepPath.lineTo(horizontalX, 0);
-        }
-        deepPath.close();
 
         Rect deepAreaRect = new Rect(startPointX, 0, endPointX, height);
         canvas.clipRect(deepAreaRect);

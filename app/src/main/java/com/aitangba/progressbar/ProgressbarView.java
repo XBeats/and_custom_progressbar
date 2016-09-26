@@ -44,6 +44,16 @@ public class ProgressbarView extends SurfaceView implements SurfaceHolder.Callba
     private int mStepDistance = 4;
     private int mRefreshTime = REFRESH_TIME;
 
+    private Direction mDirection = Direction.Right;
+
+    protected enum Direction {
+        Left, Right
+    }
+
+    public void setDirection(Direction direction) {
+        mDirection = direction;
+    }
+
     /**
      * between 0 to 100
      * @param startProgress
@@ -152,45 +162,38 @@ public class ProgressbarView extends SurfaceView implements SurfaceHolder.Callba
 
             final int width = getMeasuredWidth();
             final int height = getMeasuredHeight();
-            final float startWidth = (int) (width * mStartProgress);
-            final float limitWidth = (int) (width * mProgress);
-            final RectF clipAreaRectF = new RectF(startWidth, 0, limitWidth, height);
+            final float startPointX = (int) (width * mStartProgress);
+            final float endPointX = (int) (width * mProgress);
+            final RectF clipAreaRectF = new RectF(startPointX, 0, endPointX, height);
 
             //draw first front color
             canvas.drawRect(clipAreaRectF, mLightPaint);
 
             final int lineWidth = mLineWidth; //为保障线程安全，所有变量用final
-            final int offsetX = - 2 * lineWidth + mDistance; //由于发生裁剪，所以无需担心多出的部分
-            final float radianTanValue = (float) Math.tan(Math.toRadians(mAngle));
-            final float offsetDistance = height * radianTanValue;
-            final float totalWidth = limitWidth - startWidth + Math.abs(offsetDistance) + 2 * lineWidth;
-            final int drawCount = (int) Math.ceil(totalWidth / lineWidth);
-            final float drawStartX = (offsetDistance > 0 ? startWidth - offsetDistance : startWidth) + offsetX;
+            final int direction = mDirection == Direction.Right ? 1 : -1;
+            final float radian = (float) Math.toRadians(mAngle);
+            final float radianTanValue = (float) Math.tan(radian);
+            final int offsetX = mDistance > lineWidth ?  -2 * lineWidth + mDistance  : mDistance; //offsetX
+            final float paddingDistance = height * radianTanValue; //paddingDistance
+            final float rectWidth = endPointX - startPointX; //rectWidth
+            final float totalWidth = -offsetX + Math.abs(paddingDistance) + rectWidth;
+            final int cycleCount = (int) Math.ceil((double) totalWidth / lineWidth);
 
-            final Path frontArea = new Path();
-            frontArea.moveTo(drawStartX, 0);
-            for(int i = 0 ; i < drawCount ; i ++) {
-                float horizontalStartX = drawStartX + lineWidth * i;
-                float horizontalEndX = horizontalStartX + lineWidth;
+            final float drawStartX = (paddingDistance > 0 ? startPointX - paddingDistance : startPointX)
+                    + (direction * offsetX);
+            final Path rectPath = new Path();
+            rectPath.addRect(drawStartX, 0, drawStartX + lineWidth, height, Path.Direction.CW);
 
-                final int lineHeight = i % 2 == 0 ? height : 0;
-
-                //draw vertical
-                frontArea.lineTo(horizontalStartX, lineHeight);
-                //draw horizontal
-                frontArea.lineTo(horizontalEndX, lineHeight);
+            Path deepPath = new Path();
+            deepPath.moveTo(drawStartX, 0);
+            for(int i = 0 ; i < cycleCount; i ++) {
+                deepPath.addPath(rectPath, i * 2 * lineWidth, 0);
             }
-            //last line
-            if(drawCount % 2 != 0) {
-                float horizontalX = drawStartX + lineWidth * drawCount;
-                frontArea.lineTo(horizontalX, 0);
-            }
-            frontArea.close();
 
             //draw second front color
             canvas.clipRect(clipAreaRectF);
             canvas.skew(radianTanValue, 0);
-            canvas.drawPath(frontArea, mDeepPaint);
+            canvas.drawPath(deepPath, mDeepPaint);
 
             holder.unlockCanvasAndPost(canvas);
 
