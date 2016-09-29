@@ -21,7 +21,7 @@ public class ProgressbarView extends SurfaceView implements SurfaceHolder.Callba
 
     private static final String TAG = "ProgressbarView";
 
-    private static final int REFRESH_TIME = 15; //ms
+    private static final int REFRESH_TIME = 50; //ms
 
     private SurfaceHolder holder;
 
@@ -34,14 +34,14 @@ public class ProgressbarView extends SurfaceView implements SurfaceHolder.Callba
     private int mBackgroundColor = Color.WHITE;
 
     private boolean mIsPlaying;
-    private int mDistance; //px 0 <--> 2 * mLineWidth
+    private float mDistance; //px 0 <--> 2 * mLineWidth
     private int mLineWidth = 80; //px
     private double mAngle = 45; //
 
     private double mStartProgress = 0;
     private double mProgress = (double) 3  / 4;
 
-    private int mStepDistance = 4;
+    private float mStepDistance = 4;
     private int mRefreshTime = REFRESH_TIME;
 
     private Direction mDirection = Direction.Right;
@@ -173,7 +173,7 @@ public class ProgressbarView extends SurfaceView implements SurfaceHolder.Callba
             final int direction = mDirection == Direction.Right ? 1 : -1;
             final float radian = (float) Math.toRadians(mAngle);
             final float radianTanValue = (float) Math.tan(radian);
-            final int offsetX = mDistance > lineWidth ?  -2 * lineWidth + mDistance  : mDistance; //offsetX
+            final float offsetX = mDistance > lineWidth ?  -2 * lineWidth + mDistance  : mDistance; //offsetX
             final float paddingDistance = height * radianTanValue; //paddingDistance
             final float rectWidth = endPointX - startPointX; //rectWidth
             final float totalWidth = -offsetX + Math.abs(paddingDistance) + rectWidth;
@@ -196,6 +196,7 @@ public class ProgressbarView extends SurfaceView implements SurfaceHolder.Callba
             canvas.drawPath(deepPath, mDeepPaint);
 
             holder.unlockCanvasAndPost(canvas);
+
 
             try {
                 if(!mIsPlaying)continue;
