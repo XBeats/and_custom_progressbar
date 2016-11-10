@@ -132,7 +132,6 @@ public class ProgressbarView extends View {
                 invalidate();
             }
         });
-        mValueAnimator.start();
     }
 
     @Override
@@ -185,5 +184,21 @@ public class ProgressbarView extends View {
         canvas.clipRect(clipAreaRectF);
         canvas.skew(radianTanValue, 0);
         canvas.drawPath(deepPath, mDeepPaint);
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        if(mDrawEnable && mValueAnimator != null) {
+            mValueAnimator.start();
+        }
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        if(mValueAnimator != null && mValueAnimator.isRunning()) {
+            mValueAnimator.cancel();
+        }
+        super.onDetachedFromWindow();
     }
 }
