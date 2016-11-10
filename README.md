@@ -10,7 +10,7 @@
 ## Usage
 
 #### 主要思想
-主要有SurfaceView来实现的，毕竟需要一个线程去动态显示  
+主要有View来实现的，毕竟需要一个线程去动态显示  
 主要由3层构成，如下图：
 
 ![image](https://raw.githubusercontent.com/XBeats/and_custom_progressbar/master/screenshot/ceng.png)
