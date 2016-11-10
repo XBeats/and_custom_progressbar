@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
@@ -29,8 +30,8 @@ public class ProgressbarView extends View {
     private int mBackgroundColor = Color.WHITE;
 
     private float mDistance; //px 0 <--> 2 * mLineWidth
-    private int mLineWidth = 200; //px
-    private double mAngle = 45; //
+    private int mLineWidth = 20; //px
+    private double mAngle = 20; //
 
     private double mStartProgress = 0;
     private double mProgress = (double) 3  / 4;
@@ -43,6 +44,10 @@ public class ProgressbarView extends View {
 
     public enum Direction {
         Left, Right
+    }
+
+    public void setFinishColor(int finishColor) {
+        mFinishColor = finishColor;
     }
 
     public void setDirection(Direction direction) {
@@ -79,6 +84,10 @@ public class ProgressbarView extends View {
                 mValueAnimator.start();
             }
         }
+    }
+
+    public double getProgress() {
+        return mProgress * 100;
     }
 
     /**
@@ -119,7 +128,7 @@ public class ProgressbarView extends View {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 float mResultAnimatorValue = (float) animation.getAnimatedValue();
-                mDistance = mResultAnimatorValue * (2 * mLineWidth);
+                mDistance = mResultAnimatorValue *  (2 * mLineWidth);
                 invalidate();
             }
         });
@@ -129,14 +138,18 @@ public class ProgressbarView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        //draw background color
+
         if(!mDrawEnable) {  //finish the progress
-            if(mFinishColor <= 0)
-            canvas.drawColor(mFinishColor <= 0 ? Color.parseColor("#ffe8a1") : mFinishColor);
+            if(mFinishColor <= 0) {
+                canvas.drawColor(Color.parseColor("#ffe8a1"));
+            } else {
+                canvas.drawColor(ContextCompat.getColor(getContext(), mFinishColor));
+            }
             return;
-        } else {
-            canvas.drawColor(mBackgroundColor);
         }
+
+        //draw background color
+        canvas.drawColor(mBackgroundColor);
 
         final int width = getMeasuredWidth();
         final int height = getMeasuredHeight();

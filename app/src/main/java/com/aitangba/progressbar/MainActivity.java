@@ -43,26 +43,6 @@ public class MainActivity extends AppCompatActivity {
         });
         seekBarProgress.setProgress(50);
 
-        final TextView refreshTimeText = (TextView) findViewById(R.id.tv_refresh_time);
-        SeekBar refreshTimeSeekBar = (SeekBar) findViewById(R.id.seekBar_refresh_time);
-        refreshTimeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                refreshTimeText.setText("周期时间" + progress + "ms");
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
         final TextView angleText = (TextView) findViewById(R.id.tv_angle);
         SeekBar angleSeekBar = (SeekBar) findViewById(R.id.seekBar_angle);
         angleSeekBar.setMax(89);
@@ -84,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        angleSeekBar.setProgress(9);
+        angleSeekBar.setProgress(20);
+
+        progressbar.setFinishColor(R.color.colorPrimary);
     }
 }
